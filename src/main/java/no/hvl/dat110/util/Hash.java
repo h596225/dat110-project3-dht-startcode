@@ -31,7 +31,7 @@ public class Hash {
 		String hashhex = toHex(digest);
 
 		// convert the hex into BigInteger
-		hashint = new BigInteger(hashhex, 16);
+		hashint = new BigInteger(1, digest);
 
 	} catch (NoSuchAlgorithmException e) {
 		e.printStackTrace();
@@ -44,10 +44,11 @@ public class Hash {
 		
 		// Task: compute the address size of MD5
 		// compute the number of bits = bitSize()
-		// compute the address size = 2 ^ number of bits
+		int bitSize = bitSize();
 
+		// compute the address size = 2 ^ number of bits
         // return the address size
-		return BigInteger.valueOf(2).pow(bitSize());
+		return BigInteger.valueOf(2).pow(bitSize);
 	}
 	
 	public static int bitSize() {
@@ -62,7 +63,7 @@ public class Hash {
 			e.printStackTrace();
 		}
 		
-		return 128;
+		return digestlen*8;
 	}
 	
 	public static String toHex(byte[] digest) {

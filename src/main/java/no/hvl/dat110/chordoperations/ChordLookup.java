@@ -38,18 +38,22 @@ public class ChordLookup {
 		NodeInterface succ = currecntNode.getSuccessor();
 
 		// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the checkInterval
-		if (Util.checkInterval(key, currecntNode.getNodeID().add(BigInteger.ONE), succ.getNodeID())) {
+		if (Util.checkInterval(key, currecntNode.getNodeID().add(BigInteger.ONE), succ.getNodeID().subtract(BigInteger.ONE))) {
 			// if logic returns true, then return the successor
 			return succ;
-		}
+		} else {
+			// if logic returns false; call findHighestPredecessor(key)
+			// do highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
+			NodeInterface highest_pred = findHighestPredecessor(key);
 
-		// if logic returns false; call findHighestPredecessor(key)
-		// do highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
-		NodeInterface highest_pred = findHighestPredecessor(key);
-		if (highest_pred == null || highest_pred.equals(currecntNode)) {
-			return currecntNode;
+			if (highest_pred == null || highest_pred.equals(currecntNode)) {
+				return currecntNode;
+			}
+
+
+			succ = highest_pred.findSuccessor(key);
 		}
-		return highest_pred.findSuccessor(key);
+		return succ;
 	}
 
 	/**
@@ -63,15 +67,15 @@ public class ChordLookup {
 		List<NodeInterface> ft = node.getFingerTable();
 
 		// starting from the last entry, iterate over the finger table
-		for (int i = ft.size() - 1; i >= 0; i--) {
+		for (int i = 0 ; i < ft.size(); i++) {
 			// for each finger, obtain a stub from the registry
 			NodeInterface finger = ft.get(i);
-			BigInteger fingerID = finger.getNodeID();
+			NodeInterface fingerstub = Util.getProcessStub(finger.getNodeName(), finger.getPort());
 
 			// check that finger is a member of the set {nodeID+1,...,ID-1} i.e. (nodeID+1 <= finger <= key-1) using the ComputeLogic
 			// if logic returns true, then return the finger (means finger is the closest to key)
 			if(Util.checkInterval(finger.getNodeID(), node.getNodeID().add(BigInteger.ONE), ID.subtract(BigInteger.ONE))) {
-				return finger;
+				return fingerstub;
 			}
 		}
 		return (NodeInterface) node;

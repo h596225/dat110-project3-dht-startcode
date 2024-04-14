@@ -45,12 +45,21 @@ public class Util {
 
 		// Task: given an identifier, id: check whether pred < id <= node
 
-	    if (lower.compareTo(upper) < 0) {
-			return id.compareTo(lower) >= 0 && id.compareTo(upper) <= 0;
-		} else {
-			return id.compareTo(lower) >= 0 || id.compareTo(upper) <= 0;
+		boolean inInterval = false;
+		BigInteger adress = Hash.addressSize();
+		BigInteger node = upper;
+
+		if (lower.compareTo(upper) > 0 ) {
+			node = node.add(adress);
+			if (id.compareTo(upper) <= 0) {
+				id = id.add(adress);
+			}
+		}
+		if ((id.compareTo(lower) >= 0) && (id.compareTo(node) <= 0)) {
+			inInterval = true;
+		}
+		return inInterval;
 	}
-}
 	
 	public static List<String> toString(List<NodeInterface> list) throws RemoteException {
 		List<String> nodestr = new ArrayList<String>();

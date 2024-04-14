@@ -157,13 +157,12 @@ public class ChordProtocols {
 		
 		try {
 			logger.info("Fixing the FingerTable for the Node: "+ chordnode.getNodeName());
+
 			// get the finger table from the chordnode (list object)
 			List<NodeInterface> ft = chordnode.getFingerTable();
 
 			// ensure to clear the current finger table
-			if (ft.isEmpty()) {
-				ft.clear();
-			}
+			ft.clear();
 
 			// get the address size from the Hash class. This is the modulus and our address space (2^mbit = modulus)
 			BigInteger modulus = Hash.addressSize();
@@ -182,8 +181,6 @@ public class ChordProtocols {
 				// check that succnode is not null, then add it to the finger table
 				if (succnode != null) {
 					ft.add(succnode);
-				} else {
-					ft.add(chordnode);
 				}
 			}
 		} catch (RemoteException e) {

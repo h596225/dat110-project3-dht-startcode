@@ -185,12 +185,20 @@ public class MutualExclusion {
 			 *  the message with lower timestamp wins) - send OK if received is lower. Queue message if received is higher
 			 */
 			case 2: {
-				if (message.getClock() < clock.getClock() || (message.getClock() == clock.getClock() && message.getNodeID().compareTo(node.getNodeID()) < 0)) {
-					NodeInterface senderStub = Util.getProcessStub(procName, port);
-					senderStub.onMutexAcknowledgementReceived(message);
+				int senderClock = message.getClock();
+				int receiverClock = node.getMessage().getClock();
+
+				if (senderClock < receiverClock || (senderClock == receiverClock && message.getNodeID().compareTo(node.getNodeID()) < 0)) {
+					NodeInterface sender = Util.getProcessStub(procName, port);
+
+					message.setAcknowledged(true);
+
+					sender.onMutexAcknowledgementReceived(message);
 				} else {
+					// queue this message
 					queue.add(message);
 				}
+				break;
 			}
 			default: break;
 		}
